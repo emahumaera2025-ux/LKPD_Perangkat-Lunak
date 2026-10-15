@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LKPD Interaktif — Sistem Komputer: Perangkat Lunak</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-size: 14px; line-height: 1.5; color: #1e293b;
+  min-height: 100vh; padding: 24px 16px 130px;
+  background:
+    radial-gradient(circle at 8% -5%, #ddd6fe 0%, transparent 42%),
+    radial-gradient(circle at 95% 5%, #a5f3fc 0%, transparent 38%),
+    radial-gradient(circle at 50% 105%, #fde68a 0%, transparent 42%),
+    linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+  background-attachment: fixed; -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 1000px; margin: 0 auto; }
+
+.hero {
+  position: relative; overflow: hidden; border-radius: 30px; padding: 40px 36px;
+  background: linear-gradient(125deg, #4f46e5 0%, #7c3aed 42%, #06b6d4 100%);
+  color: #fff; margin-bottom: 24px;
+  box-shadow: 0 34px 60px -26px rgba(79,70,229,.62), 0 0 0 1px rgba(255,255,255,.14) inset;
+}
+.hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,.18), transparent 45%); pointer-events: none; }
+.hero-blob { position: absolute; border-radius: 50%; filter: blur(42px); opacity: .55; pointer-events: none; }
+.b1 { width: 280px; height: 280px; background: #22d3ee; top: -110px; right: -60px; }
+.b2 { width: 230px; height: 230px; background: #f472b6; bottom: -120px; left: -50px; opacity: .42; }
+.hero-content { position: relative; z-index: 2; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.32);
+  padding: 7px 15px; border-radius: 100px;
+  font-size: 11px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}
+.hero-badge .dot { width: 7px; height: 7px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 10px #4ade80; }
+.hero h1 { font-size: clamp(26px, 4.4vw, 38px); font-weight: 800; line-height: 1.14; margin: 16px 0 8px; letter-spacing: -.7px; }
+.hero h1 span { background: linear-gradient(90deg, #fde68a, #67e8f9); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.hero p { font-size: 14px; opacity: .92; font-weight: 500; }
+.hero-meta { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 20px; }
+.chip { background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.26); padding: 7px 14px; border-radius: 100px; font-size: 12px; font-weight: 600; backdrop-filter: blur(6px); }
+
+.card {
+  position: relative; background: #fff; border-radius: 26px; padding: 30px;
+  margin-bottom: 22px; border: 1px solid rgba(226,232,240,.95);
+  box-shadow: 0 1px 2px rgba(15,23,42,.04), 0 22px 44px -26px rgba(15,23,42,.28), 0 1px 0 #fff inset;
+  transition: transform .38s cubic-bezier(.2,.8,.2,1), box-shadow .38s;
+}
+.card:hover { transform: translateY(-4px); box-shadow: 0 4px 10px rgba(15,23,42,.05), 0 36px 66px -30px rgba(99,102,241,.42), 0 1px 0 #fff inset; }
+.sec-head { display: flex; align-items: center; gap: 15px; margin-bottom: 22px; }
+.sec-icon {
+  flex: none; width: 50px; height: 50px; border-radius: 16px;
+  display: grid; place-items: center; font-weight: 800; font-size: 17px; color: #fff;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  box-shadow: 0 12px 22px -10px rgba(99,102,241,.95), inset 0 -3px 0 rgba(0,0,0,.14), inset 0 2px 0 rgba(255,255,255,.34);
+}
+.sec-icon.cyan { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+.sec-icon.amber { background: linear-gradient(135deg, #f59e0b, #ea580c); }
+.sec-icon.emerald { background: linear-gradient(135deg, #10b981, #059669); }
+.sec-icon.rose { background: linear-gradient(135deg, #f43f5e, #be123c); }
+.sec-head h2 { font-size: 18px; font-weight: 800; letter-spacing: -.3px; }
+.sec-head p { font-size: 12.5px; color: #64748b; margin-top: 3px; font-weight: 500; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.grid-4 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.lbl { display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 7px; }
+.lbl.mt { margin-top: 16px; }
+.field {
+  width: 100%; font-family: inherit; font-size: 13.5px; color: #1e293b;
+  background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 13px;
+  padding: 12px 15px; outline: none; transition: .22s; font-weight: 500;
+}
+.field::placeholder { color: #94a3b8; font-weight: 400; }
+.field:focus { border-color: #8b5cf6; background: #fff; box-shadow: 0 0 0 4px rgba(139,92,246,.14); }
+.field[readonly] { background: #f1f5f9; color: #64748b; cursor: default; }
+textarea.field { resize: vertical; min-height: 78px; line-height: 1.65; }
+select.field {
+  appearance: none; cursor: pointer; padding-right: 42px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-repeat: no-repeat; background-position: right 15px center;
+}
+
+.list-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; margin-top: 10px; }
+.list-box ul { list-style: none; padding-left: 0; margin: 0; }
+.list-box li { font-size: 13px; line-height: 1.7; color: #334155; margin-bottom: 8px; font-weight: 500; }
+.list-box li:last-child { margin-bottom: 0; }
+.list-box strong { color: #4338ca; }
+
+.q { margin-bottom: 20px; }
+.q:last-child { margin-bottom: 0; }
+.q-text { display: flex; gap: 11px; font-size: 13.5px; font-weight: 600; line-height: 1.6; margin-bottom: 11px; }
+.q-num {
+  flex: none; width: 26px; height: 26px; border-radius: 9px; display: grid; place-items: center;
+  background: linear-gradient(135deg, #e0e7ff, #c7d2fe); color: #4338ca;
+  font-size: 12px; font-weight: 800; margin-top: 1px;
+}
+.hint {
+  display: flex; gap: 9px; align-items: flex-start;
+  background: linear-gradient(135deg, #fffbeb, #fef3c7);
+  border-left: 4px solid #f59e0b; border-radius: 0 13px 13px 0;
+  padding: 13px 16px; font-size: 13px; color: #78350f; line-height: 1.6; margin-bottom: 18px; font-weight: 500;
+}
+
+.dnd-container { display: flex; flex-direction: column; gap: 20px; }
+.pool {
+  display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+  min-height: 100px; padding: 16px; background: #f8fafc; border-radius: 16px;
+  border: 2px dashed #cbd5e1; transition: background .2s;
+}
+.pool.dragover { background: #e0e7ff; border-color: #6366f1; }
+.zones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+.zone {
+  background: #fff; border: 2px solid #e2e8f0; border-radius: 16px;
+  padding: 12px; min-height: 160px; transition: all .2s;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.zone.dragover { border-color: #6366f1; background: #eef2ff; }
+.zone-title {
+  font-size: 12px; font-weight: 800; color: #6366f1;
+  text-align: center; padding-bottom: 8px; border-bottom: 2px solid #e2e8f0;
+  text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px;
+}
+.zone-items { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; align-content: flex-start; }
+.sw-card {
+  display: flex; align-items: center; gap: 8px; background: #fff;
+  border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 8px 12px;
+  cursor: grab; user-select: none; transition: all .2s;
+  box-shadow: 0 2px 4px rgba(0,0,0,.04);
+  max-width: 180px; flex-shrink: 0;
+}
+.sw-card:active { cursor: grabbing; }
+.sw-card.selected { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,.3); }
+.sw-card.dragging { opacity: .5; }
+.sw-card .sw-icon { width: 34px; height: 34px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.sw-card .sw-icon svg { width: 100%; height: 100%; }
+.sw-card span { font-size: 12px; font-weight: 700; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sw-card .tag {
+  font-size: 9px; font-weight: 800; color: #fff; background: #6366f1;
+  padding: 2px 5px; border-radius: 4px; margin-left: auto; flex-shrink: 0;
+}
+.sw-card .tag.app { background: #10b981; }
+.sw-card .tag.util { background: #f59e0b; }
+
+.case-study {
+  background: linear-gradient(135deg, #eef2ff 0%, #e0f2fe 100%);
+  border: 2px solid #c7d2fe;
+  border-radius: 18px;
+  padding: 22px 24px;
+  margin: 18px 0 24px 0;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 20px -12px rgba(99,102,241,.4);
+}
+.case-study::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 6px; height: 100%;
+  background: linear-gradient(180deg, #6366f1, #06b6d4);
+}
+.case-study .cs-label {
+  display: inline-block;
+  font-size: 10.5px; font-weight: 800; letter-spacing: 1.5px;
+  color: #4338ca; background: #fff;
+  padding: 5px 12px; border-radius: 100px;
+  border: 1px solid #c7d2fe;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+.case-study .cs-title { font-size: 17px; font-weight: 800; color: #312e81; margin-bottom: 6px; letter-spacing: -.3px; }
+.case-study .cs-ctx { font-size: 12px; font-weight: 700; color: #6366f1; margin-bottom: 12px; letter-spacing: .2px; }
+.case-study .cs-desc {
+  font-size: 13.5px; line-height: 1.72; color: #3730a3; font-weight: 500;
+  background: rgba(255,255,255,.6);
+  padding: 14px 16px;
+  border-radius: 12px;
+  border-left: 3px solid #6366f1;
+}
+
+.analysis-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+.analysis-table th {
+  background: #eef2ff; padding: 10px; font-size: 12.5px; font-weight: 800;
+  color: #4338ca; text-align: left; border-bottom: 2px solid #c7d2fe;
+}
+.analysis-table td { padding: 6px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+.analysis-table input, .analysis-table textarea {
+  width: 100%; border: 1.5px solid #e2e8f0; border-radius: 10px;
+  padding: 10px; font-family: inherit; font-size: 12.5px;
+  outline: none; transition: .2s; background: #fff;
+}
+.analysis-table input:focus, .analysis-table textarea:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,.1); }
+.analysis-table textarea { resize: vertical; min-height: 60px; }
+
+.action-bar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+  padding: 15px 16px calc(15px + env(safe-area-inset-bottom));
+  background: rgba(255,255,255,.86);
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  border-top: 1px solid rgba(226,232,240,.95);
+  box-shadow: 0 -14px 34px -20px rgba(15,23,42,.35);
+  display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+}
+.btn {
+  --shade: #4338ca; --glow: rgba(99,102,241,.7);
+  font-family: inherit; font-size: 14px; font-weight: 700; color: #fff;
+  border: none; border-radius: 16px; padding: 14px 26px; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  box-shadow: 0 6px 0 var(--shade), 0 16px 28px -14px var(--glow);
+  transition: transform .16s ease, box-shadow .16s ease, filter .16s;
+  white-space: nowrap;
+}
+.btn:hover { filter: brightness(1.07); transform: translateY(-1px); }
+.btn:active { transform: translateY(5px); box-shadow: 0 1px 0 var(--shade), 0 6px 14px -8px var(--glow); }
+.btn svg { width: 18px; height: 18px; flex: none; }
+.btn.pdf { --shade: #b91c1c; --glow: rgba(244,63,94,.7); background: linear-gradient(135deg, #f43f5e, #e11d48); }
+.btn.send { --shade: #047857; --glow: rgba(16,185,129,.7); background: linear-gradient(135deg, #10b981, #059669); }
+.btn:disabled { opacity: .62; cursor: not-allowed; transform: none; filter: grayscale(.35); }
+
+.toast {
+  position: fixed; left: 50%; bottom: 110px; transform: translate(-50%, 26px);
+  background: linear-gradient(135deg, #1e293b, #0f172a); color: #fff;
+  padding: 15px 26px; border-radius: 16px; font-size: 13px; font-weight: 600;
+  box-shadow: 0 24px 46px -18px rgba(15,23,42,.75);
+  opacity: 0; pointer-events: none; transition: .36s cubic-bezier(.2,.8,.2,1); z-index: 99;
+  display: flex; align-items: center; gap: 10px; max-width: 90vw;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.toast .ic { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; flex: none; font-size: 13px; }
+.toast.ok .ic { background: #10b981; }
+.toast.err .ic { background: #f43f5e; }
+
+/* PDF PRINT AREA */
+#pdfContainer {
+  position: absolute; top: 0; left: 0;
+  width: 718px; background: #ffffff;
+  z-index: -1; pointer-events: none; overflow: hidden;
+}
+
+/* =========================================================
+   KOP JUDUL PDF — Ditengahkan
+   LEMBAR KERJA PESERTA DIDIK → lebih BESAR
+   Sistem Komputer — Perangkat Lunak → lebih KECIL
+   ========================================================= */
+.pdf-doc { font-family: 'Plus Jakarta Sans', Arial, sans-serif; color: #1e293b; padding: 4px 6px; background: #fff; width: 100%; }
+.pdf-doc .doc-head {
+  border-bottom: 4px solid #6366f1;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+  text-align: center;   /* ← kop judul di tengah */
+}
+.pdf-doc .doc-label {
+  font-size: 18px;              /* ← diperbesar dari 10px */
+  letter-spacing: 3px;
+  color: #6366f1;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.pdf-doc .doc-title {
+  font-size: 12px;              /* ← diperkecil dari 20px */
+  font-weight: 700;
+  color: #312e81;
+  letter-spacing: .3px;
+  margin-top: 5px;
+}
+.pdf-doc .doc-sub {
+  font-size: 9.5px;
+  color: #64748b;
+  margin-top: 5px;
+  font-weight: 600;
+}
+.pdf-doc .p-sec { margin-bottom: 11px; }
+.pdf-doc .p-head {
+  font-size: 11px; font-weight: 800; color: #fff;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  padding: 6px 12px; border-radius: 8px; margin-bottom: 8px;
+  letter-spacing: .4px;
+}
+.pdf-doc .p-head.c { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+.pdf-doc .p-head.a { background: linear-gradient(135deg, #f59e0b, #ea580c); }
+.pdf-doc .p-head.e { background: linear-gradient(135deg, #10b981, #059669); }
+.pdf-doc .p-head.v { background: linear-gradient(135deg, #f43f5e, #be123c); }
+.pdf-doc table { width: 100%; border-collapse: collapse; font-size: 10.5px; table-layout: fixed; }
+.pdf-doc td, .pdf-doc th {
+  border: 1px solid #cbd5e1; padding: 6px 7px; vertical-align: top; text-align: left;
+  line-height: 1.45; word-wrap: break-word; overflow-wrap: break-word;
+}
+.pdf-doc th { background: #eef2ff; font-weight: 700; color: #3730a3; }
+.pdf-doc .p-kv { margin-bottom: 7px; }
+.pdf-doc .p-kv .k { font-size: 10px; font-weight: 800; color: #4338ca; margin-bottom: 3px; }
+.pdf-doc .p-kv .v {
+  font-size: 10.5px; line-height: 1.5; background: #f8fafc; border: 1px solid #e2e8f0;
+  border-radius: 7px; padding: 7px 10px; white-space: pre-wrap; word-wrap: break-word; min-height: 16px;
+}
+.pdf-doc .p-idbox { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 10.5px; margin-bottom: 8px; }
+.pdf-doc .p-idbox div { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 7px; padding: 6px 10px; }
+.pdf-doc .p-idbox b { color: #4338ca; }
+.pdf-doc .doc-footer { margin-top: 12px; padding-top: 7px; border-top: 1.5px dashed #cbd5e1; font-size: 9px; color: #94a3b8; text-align: center; font-weight: 600; }
+
+.pdf-doc .sw-grid { display: flex; flex-wrap: wrap; gap: 4px; }
+.pdf-doc .sw-chip {
+  display: flex; align-items: center; gap: 5px;
+  background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;
+  padding: 3px 6px; font-size: 9.5px; font-weight: 700; color: #1e293b;
+  max-width: 100%; flex-shrink: 0;
+}
+.pdf-doc .sw-chip img { width: 18px; height: 18px; flex: none; display: block; object-fit: contain; }
+.pdf-doc .sw-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 110px; }
+.pdf-doc .list-num { padding-left: 16px; }
+.pdf-doc .list-num li { font-size: 10.5px; line-height: 1.55; margin-bottom: 3px; color: #334155; }
+
+@media (max-width: 760px) {
+  body { padding: 16px 12px 150px; }
+  .hero { border-radius: 24px; padding: 30px 22px; }
+  .card { border-radius: 22px; padding: 22px 18px; }
+  .grid-2, .grid-4 { grid-template-columns: 1fr; }
+  .zones { grid-template-columns: 1fr; }
+  .sw-card { max-width: 100%; width: 100%; }
+  .analysis-table { display: block; overflow-x: auto; }
+  .analysis-table th, .analysis-table td { min-width: 120px; }
+  .action-bar { gap: 9px; padding: 12px 12px calc(12px + env(safe-area-inset-bottom)); }
+  .btn { flex: 1 1 100%; padding: 14px 18px; font-size: 13.5px; }
+  .sec-head { gap: 12px; }
+  .sec-icon { width: 44px; height: 44px; font-size: 15px; border-radius: 14px; }
+  .sec-head h2 { font-size: 17px; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="hero-blob b1"></div>
+    <div class="hero-blob b2"></div>
+    <div class="hero-content">
+      <span class="hero-badge"><span class="dot"></span>LKPD INTERAKTIF</span>
+      <h1>Sistem Komputer<br><span>Perangkat Lunak (Software)</span></h1>
+      <p>Mata Pelajaran Informatika &nbsp;•&nbsp; Problem Based Learning</p>
+      <div class="hero-meta">
+        <span class="chip">🎯 3 Tujuan Pembelajaran</span>
+        <span class="chip">👥 Kerja Kelompok</span>
+        <span class="chip">📄 Unduh Hasil PDF</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- A. Tujuan Pembelajaran -->
+  <section class="card">
+    <div class="sec-head">
+      <div class="sec-icon" style="background:linear-gradient(135deg,#f59e0b,#ea580c);">A</div>
+      <div><h2>A. Tujuan Pembelajaran</h2><p>Kompetensi yang akan dicapai setelah pembelajaran</p></div>
+    </div>
+    <div class="list-box">
+      <ul>
+        <li><strong>1.</strong> Murid mampu menjelaskan pengertian perangkat lunak (software) beserta minimal dua ciri pokoknya setelah menyimak pemaparan materi secara tepat. (C2 – Menjelaskan)</li>
+        <li><strong>2.</strong> Murid mampu mengklasifikasikan perangkat lunak (software) berdasarkan fungsinya ke dalam kategori sistem operasi, aplikasi, dan utilitas melalui pengamatan gambar tampilan dan contoh software dengan benar minimal 10 dari 20 contoh. (C2 – Mengklasifikasikan)</li>
+        <li><strong>3.</strong> Murid mampu menganalisis kebutuhan perangkat lunak (software) berdasarkan studi kasus sederhana melalui diskusi kelompok, dengan menentukan minimal tiga software yang sesuai dengan kebutuhan dalam kasus serta memberikan alasan logis untuk setiap pilihan. (C4 – Menganalisis)</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- B. K3 -->
+  <section class="card">
+    <div class="sec-head">
+      <div class="sec-icon" style="background:linear-gradient(135deg,#10b981,#059669);">B</div>
+      <div><h2>B. Keselamatan dan Kesehatan Kerja (K3)</h2><p>Panduan keselamatan saat menggunakan perangkat komputer</p></div>
+    </div>
+    <div class="list-box">
+      <ul>
+        <li>Menggunakan perangkat secara hati-hati, tidak memindahkan perangkat, dan tidak mengubah kabel atau sambungan perangkat tanpa izin.</li>
+        <li>Gunakan mouse dan keyboard dengan gerakan yang wajar, dan hindari penggunaan yang berlebihan tanpa istirahat untuk mencegah cedera pergelangan tangan.</li>
+        <li>Setiap 20 menit menatap layar komputer, istirahatkan mata selama 20 detik dengan melihat objek yang berjarak 20 kaki (sekitar 6 meter).</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- C. Petunjuk Pengerjaan -->
+  <section class="card">
+    <div class="sec-head">
+      <div class="sec-icon rose">C</div>
+      <div><h2>C. Petunjuk Pengerjaan</h2><p>Langkah-langkah yang harus diikuti selama mengerjakan LKPD</p></div>
+    </div>
+    <div class="list-box">
+      <ul>
+        <li><strong>1.</strong> Kerjakan bersama kelompok dan diskusikan setiap jawaban.</li>
+        <li><strong>2.</strong> Tulis jawaban dengan kalimat sendiri, jangan menyalin dari media pembelajaran atau google.</li>
+        <li><strong>3.</strong> Tanyakan kepada guru jika ada yang belum jelas.</li>
+        <li><strong>4.</strong> Presentasikan hasil pekerjaan kelompok selama ±2 menit.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- IDENTITAS -->
+  <section class="card">
+    <div class="sec-head"><div class="sec-icon">ID</div><div><h2>Identitas Kelompok</h2><p>Lengkapi data kelompokmu sebelum mengerjakan</p></div></div>
+    <div class="grid-2">
+      <div><label class="lbl">Mata Pelajaran</label><input class="field" value="Informatika" readonly></div>
+      <div><label class="lbl">Kelas</label><input class="field" id="inKelas" placeholder="Contoh: X RPL 1"></div>
+    </div>
+    <div class="grid-2" style="margin-top:14px;">
+      <div>
+        <label class="lbl">Nomor Kelompok</label>
+        <select class="field" id="inKelompok">
+          <option value="1">Kelompok 1</option><option value="2">Kelompok 2</option>
+          <option value="3">Kelompok 3</option><option value="4">Kelompok 4</option>
+          <option value="5">Kelompok 5</option><option value="6">Kelompok 6</option>
+          <option value="7">Kelompok 7</option>
+        </select>
+      </div>
+      <div><label class="lbl">Model Pembelajaran</label><input class="field" value="Problem Based Learning (PBL)" readonly></div>
+    </div>
+    <label class="lbl mt">Nama Anggota Kelompok</label>
+    <div class="grid-2">
+      <input class="field nm" placeholder="1. Nama lengkap">
+      <input class="field nm" placeholder="2. Nama lengkap">
+      <input class="field nm" placeholder="3. Nama lengkap">
+      <input class="field nm" placeholder="4. Nama lengkap">
+      <input class="field nm" placeholder="5. Nama lengkap">
+      <input class="field nm" placeholder="6. Nama lengkap">
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="sec-head"><div class="sec-icon cyan">01</div><div><h2>Aktivitas 1 — Kenali Software!</h2><p>Tujuan: Menjelaskan pengertian &amp; ciri pokok perangkat lunak</p></div></div>
+    <div class="hint"><span>💡</span><span>Diskusikan bersama kelompok, lalu tulis jawaban menggunakan <b>bahasa sendiri</b>. Jangan menyalin dari internet.</span></div>
+    <div class="q">
+      <div class="q-text"><span class="q-num">1</span><span>Apa yang dimaksud dengan perangkat lunak (software)?</span></div>
+      <textarea class="field" id="a1q1" rows="4" placeholder="Tuliskan pengertian perangkat lunak menurut pemahaman kelompokmu..."></textarea>
+    </div>
+    <div class="q">
+      <div class="q-text"><span class="q-num">2</span><span>Tuliskan minimal dua ciri pokok software! (Isi minimal 2, boleh lebih)</span></div>
+      <div class="grid-4">
+        <div><label class="lbl">Ciri 1</label><textarea class="field" id="a1c1" rows="3" placeholder="Ciri pokok pertama..."></textarea></div>
+        <div><label class="lbl">Ciri 2</label><textarea class="field" id="a1c2" rows="3" placeholder="Ciri pokok kedua..."></textarea></div>
+        <div><label class="lbl">Ciri 3 (Opsional)</label><textarea class="field" id="a1c3" rows="3" placeholder="Ciri pokok ketiga..."></textarea></div>
+        <div><label class="lbl">Ciri 4 (Opsional)</label><textarea class="field" id="a1c4" rows="3" placeholder="Ciri pokok keempat..."></textarea></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AKTIVITAS 2 — Klasifikasi Software -->
+  <section class="card">
+    <div class="sec-head"><div class="sec-icon amber">02</div><div><h2>Aktivitas 2 — Klasifikasi Software!</h2><p>Tujuan: Mengklasifikasikan software berdasarkan fungsinya</p></div></div>
+    <div class="hint"><span>🎯</span><span><b>Petunjuk:</b> Perhatikan 20 software berikut beserta gambar tampilannya. Seret (drag) atau ketuk gambar software ke dalam kolom kategori yang tepat (Sistem Operasi, Aplikasi, atau Utilitas).</span></div>
+    <div class="dnd-container">
+      <div class="pool" id="pool"></div>
+      <div class="zones">
+        <div class="zone" id="zone-os" data-type="Sistem Operasi"><div class="zone-title">💻 Sistem Operasi</div><div class="zone-items"></div></div>
+        <div class="zone" id="zone-app" data-type="Aplikasi"><div class="zone-title">📱 Aplikasi</div><div class="zone-items"></div></div>
+        <div class="zone" id="zone-util" data-type="Utilitas"><div class="zone-title">🔧 Utilitas</div><div class="zone-items"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="sec-head"><div class="sec-icon emerald">03</div><div><h2>Aktivitas 3 — Pilih Software yang Tepat!</h2><p>Menganalisis kebutuhan software berdasarkan studi kasus</p></div></div>
+
+    <div class="hint" style="background:#e0f2fe; border-left-color:#0284c7; color:#0c4a6e;">
+      <span>📋</span>
+      <span><b>Tugas Kelompok:</b> Berdasarkan studi kasus yang diperoleh, analisis kebutuhan software untuk menyelesaikan permasalahan tersebut dengan cara:
+        <br>• Mengidentifikasi minimal tiga kebutuhan software dalam kasus.
+        <br>• Menuliskan minimal tiga software yang sesuai dengan kebutuhan tersebut.
+        <br>• Menjelaskan alasan logis untuk setiap pilihan dengan menghubungkan fungsi software dan kebutuhan dalam kasus.</span>
+    </div>
+
+    <div class="case-study">
+      <span class="cs-label" id="caseTag">Studi Kasus — Kelompok 1</span>
+      <div class="cs-title" id="caseTitle">Membuat Poster Digital</div>
+      <div class="cs-ctx" id="caseCtx">Konteks: Desain dan publikasi</div>
+      <div class="cs-desc" id="caseDesc">Memuat studi kasus...</div>
+    </div>
+
+    <label class="lbl" style="margin-top: 5px; font-size: 13.5px; color: #4338ca;">📝 Tabel Hasil Analisis</label>
+    <table class="analysis-table" id="tblA3">
+      <thead>
+        <tr>
+          <th style="width: 30%;">Kebutuhan dalam kasus</th>
+          <th style="width: 30%;">Software yang sesuai</th>
+          <th style="width: 40%;">Alasan pemilihan</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><input class="field need-in" placeholder="Kebutuhan 1..."></td><td><input class="field sw-in" placeholder="Software 1..."></td><td><textarea class="field rs-in" rows="2" placeholder="Alasan logis..."></textarea></td></tr>
+        <tr><td><input class="field need-in" placeholder="Kebutuhan 2..."></td><td><input class="field sw-in" placeholder="Software 2..."></td><td><textarea class="field rs-in" rows="2" placeholder="Alasan logis..."></textarea></td></tr>
+        <tr><td><input class="field need-in" placeholder="Kebutuhan 3..."></td><td><input class="field sw-in" placeholder="Software 3..."></td><td><textarea class="field rs-in" rows="2" placeholder="Alasan logis..."></textarea></td></tr>
+        <tr><td><input class="field need-in" placeholder="Kebutuhan 4..."></td><td><input class="field sw-in" placeholder="Software 4..."></td><td><textarea class="field rs-in" rows="2" placeholder="Alasan logis..."></textarea></td></tr>
+        <tr><td><input class="field need-in" placeholder="Kebutuhan 5..."></td><td><input class="field sw-in" placeholder="Software 5..."></td><td><textarea class="field rs-in" rows="2" placeholder="Alasan logis..."></textarea></td></tr>
+        <tr><td><input class="field need-in" placeholder="Kebutuhan 6..."></td><td><input class="field sw-in" placeholder="Software 6..."></td><td><textarea class="field rs-in" rows="2" placeholder="Alasan logis..."></textarea></td></tr>
+      </tbody>
+    </table>
+
+    <div class="q" style="margin-top: 25px;">
+      <div class="q-text"><span class="q-num">?</span><span>Pertanyaan Refleksi Kelompok: Mengapa software yang dipilih harus disesuaikan dengan kebutuhan dalam studi kasus?</span></div>
+      <textarea class="field" id="a4q1" rows="3" placeholder="Tuliskan kesimpulan kelompokmu..."></textarea>
+    </div>
+  </section>
+</div>
+
+<div class="action-bar">
+  <button class="btn pdf" id="btnPdf">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Unduh LKPD (PDF)
+  </button>
+  <button class="btn send" id="btnSend">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    Kirim Tugas
+  </button>
+</div>
+
+<div class="toast" id="toast"><span class="ic">✓</span><span id="toastMsg">Berhasil</span></div>
+<div id="pdfContainer"></div>
+
+<script>
+const SOFTWARE = [
+  { id:'os1',  nama:'Windows',    type:'Sistem Operasi', svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><rect x="4" y="6" width="18.5" height="17" rx="1.6" fill="#F25022"/><rect x="25.5" y="6" width="18.5" height="17" rx="1.6" fill="#7FBA00"/><rect x="4" y="25" width="18.5" height="17" rx="1.6" fill="#00A4EF"/><rect x="25.5" y="25" width="18.5" height="17" rx="1.6" fill="#FFB900"/></svg>` },
+  { id:'os2',  nama:'macOS',      type:'Sistem Operasi', svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><rect x="6" y="4" width="36" height="40" rx="6" fill="#1C1C1E"/><path d="M24 15c-2 0-3.5 1.5-4.5 3.5s-1.5 5-1.5 7c0 3 2 5 4 5 1 0 2-.5 3-.5s2 .5 3 .5c2 0 4-2 4-5 0-2-.5-4.5-1.5-6.5S26 15 24 15z" fill="#fff"/><circle cx="24" cy="11" r="3" fill="#fff"/></svg>` },
+  { id:'os3',  nama:'Linux Ubuntu',type:'Sistem Operasi', svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><circle cx="24" cy="24" r="21" fill="#E95420"/><circle cx="24" cy="24" r="10.5" fill="none" stroke="#fff" stroke-width="3.6"/><circle cx="24" cy="13.5" r="3.4" fill="#fff"/><circle cx="33.1" cy="29.3" r="3.4" fill="#fff"/><circle cx="14.9" cy="29.3" r="3.4" fill="#fff"/></svg>` },
+  { id:'os4',  nama:'Android',    type:'Sistem Operasi', svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path d="M17 14 L12.5 7.5" stroke="#3DDC84" stroke-width="2.4" stroke-linecap="round"/><path d="M31 14 L35.5 7.5" stroke="#3DDC84" stroke-width="2.4" stroke-linecap="round"/><path d="M12 21.5 a12 12 0 0 1 24 0 v14 a4 4 0 0 1 -4 4 h-16 a4 4 0 0 1 -4 -4 z" fill="#3DDC84"/><circle cx="18.5" cy="22" r="2.3" fill="#fff"/><circle cx="29.5" cy="22" r="2.3" fill="#fff"/></svg>` },
+  { id:'os5',  nama:'iOS',        type:'Sistem Operasi', svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><rect x="8" y="4" width="32" height="40" rx="6" fill="#1C1C1E"/><rect x="12" y="8" width="24" height="28" rx="3" fill="#fff"/><circle cx="24" cy="38" r="2.5" fill="#3DDC84"/><text x="24" y="26" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" fill="#1C1C1E" text-anchor="middle">iOS</text></svg>` },
+  { id:'app1', nama:'MS Word',    type:'Aplikasi', svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><rect x="6" y="4" width="36" height="40" rx="6" fill="#2B579A"/><text x="24" y="33" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#fff" text-anchor="middle">W</text></svg>` },
+  { id:'app2', nama:'MS Excel',   type:'Aplikasi', svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><rect x="6" y="4" width="36" height="40" rx="6" fill="#217346"/><text x="24" y="33" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#fff" text-anchor="middle">X</text></svg>` },
+  { id:'app3', nama:'PowerPoint', type:'Aplikasi', svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><rect x="6" y="4" width="36" height="40" rx="6" fill="#D24726"/><text x="24" y="33" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#fff" text-anchor="middle">P</text></svg>` },
+  { id:'app4', nama:'Chrome',     type:'Aplikasi', svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#fff"/><path d="M24 2 A22 22 0 0 1 43 35 L24 24 Z" fill="#EA4335"/><path d="M43 35 A22 22 0 0 1 5 35 L24 24 Z" fill="#34A853"/><path d="M5 35 A22 22 0 0 1 24 2 L24 24 Z" fill="#FBBC05"/><circle cx="24" cy="24" r="10" fill="#fff"/><circle cx="24" cy="24" r="8" fill="#4285F4"/></svg>` },
+  { id:'app5', nama:'WhatsApp',   type:'Aplikasi', svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#25D366"/><path d="M24 12c-6.6 0-12 5.4-12 12 0 2.1.6 4.2 1.6 6L12 36l6.3-1.6c1.7 1 3.7 1.6 5.7 1.6 6.6 0 12-5.4 12-12s-5.4-12-12-12z" fill="#fff"/><path d="M20 20l8 8M20 28l8-8" stroke="#25D366" stroke-width="2.5" stroke-linecap="round"/></svg>` },
+  { id:'app6', nama:'Canva',      type:'Aplikasi', svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="#00C4CC"/><circle cx="24" cy="24" r="12" fill="none" stroke="#fff" stroke-width="3"/><path d="M18 30l6-12 6 12" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>` },
+  { id:'app7', nama:'Zoom',       type:'Aplikasi', svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><rect x="6" y="12" width="36" height="24" rx="8" fill="#2D8CFF"/><rect x="12" y="18" width="16" height="12" rx="3" fill="#fff"/><path d="M32 22l6-4v12l-6-4z" fill="#fff"/></svg>` },
+  { id:'app8', nama:'VLC Media Player', type:'Aplikasi', svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path d="M24 4 L10 40 h28 Z" fill="#FF9500"/><path d="M24 12 L15 36 h18 Z" fill="#FFD500"/><path d="M24 20 L19 32 h10 Z" fill="#FF3B30"/><circle cx="24" cy="38" r="3" fill="#fff"/></svg>` },
+  { id:'app9', nama:'Google Maps',type:'Aplikasi', svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="#34A853"/><path d="M24 8 C18 8 14 12 14 18 C14 26 24 40 24 40 C24 40 34 26 34 18 C34 12 30 8 24 8 Z" fill="#fff"/><circle cx="24" cy="18" r="4" fill="#EA4335"/></svg>` },
+  { id:'util1',nama:'Win Defender', type:'Utilitas', svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path d="M24 3 L43 10.5 v13.8 C43 36 34.5 42.5 24 45 C13.5 42.5 5 36 5 24.3 V10.5 Z" fill="#0078D4"/><path d="M24 9.5 L37 14.6 v9.9 C37 31.6 31.5 36.5 24 38.6 C16.5 36.5 11 31.6 11 24.5 V14.6 Z" fill="#50E6FF"/><path d="M20.5 24.5 l2.8 2.8 l5.5 -6" stroke="#0B4C8C" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>` },
+  { id:'util2',nama:'7-Zip',        type:'Utilitas', svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path d="M8 11 h13 l4.5 5.5 H40 a3.5 3.5 0 0 1 3.5 3.5 v18 a3.5 3.5 0 0 1 -3.5 3.5 H8 a3.5 3.5 0 0 1 -3.5 -3.5 V14.5 A3.5 3.5 0 0 1 8 11 z" fill="#F2B705"/><path d="M4.5 17 h39 v-1 H4.5 z" fill="#D99A00"/><text x="24" y="34.5" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700" fill="#1F2937" text-anchor="middle">7z</text></svg>` },
+  { id:'util3',nama:'Disk Cleanup', type:'Utilitas', svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><rect x="5" y="13" width="38" height="24" rx="5" fill="#475569"/><rect x="12" y="19" width="20" height="4.5" rx="2.2" fill="#94A3B8"/><rect x="12" y="27" width="13" height="4.5" rx="2.2" fill="#94A3B8"/><circle cx="36.5" cy="30" r="2.8" fill="#34D399"/><path d="M39 8 l1.6 3.4 L44 13 l-3.4 1.6 L39 18 l-1.6 -3.4 L34 13 l3.4 -1.6 z" fill="#FBBF24"/></svg>` },
+  { id:'util4',nama:'WinRAR',       type:'Utilitas', svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><rect x="8" y="8" width="32" height="32" rx="6" fill="#6A1B9A"/><path d="M18 12v6h4v-6z" fill="#FFD700"/><path d="M18 20v6h4v-6z" fill="#FFD700"/><path d="M18 28v8h4v-8z" fill="#FFD700"/><path d="M24 12v6h4v-6z" fill="#FFD700"/><path d="M24 20v6h4v-6z" fill="#FFD700"/></svg>` },
+  { id:'util5',nama:'Task Manager', type:'Utilitas', svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><rect x="6" y="8" width="36" height="32" rx="6" fill="#0F172A"/><rect x="10" y="14" width="28" height="4" rx="2" fill="#38BDF8"/><rect x="10" y="22" width="20" height="4" rx="2" fill="#F472B6"/><rect x="10" y="30" width="24" height="4" rx="2" fill="#4ADE80"/></svg>` },
+  { id:'util6',nama:'Windows Backup', type:'Utilitas', svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><rect x="6" y="6" width="36" height="36" rx="6" fill="#0284C7"/><path d="M24 14v14M18 22l6 6 6-6" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="12" y="34" width="24" height="4" rx="2" fill="#BAE6FD"/></svg>` }
+];
+
+const CASES = {
+  1:{ title:'Membuat Poster Digital', ctx:'Konteks: Desain dan publikasi',
+      desc:'Rina dan kelompoknya mendapat tugas membuat poster digital untuk kegiatan sekolah. Mereka perlu mencari referensi gambar di internet, mendesain poster, dan melindungi komputer dari ancaman virus.' },
+  2:{ title:'Menyiapkan Presentasi', ctx:'Konteks: Presentasi kelas',
+      desc:'Andi dan kelompoknya akan mempresentasikan materi pencemaran lingkungan. Mereka perlu mencari informasi, membuat slide presentasi, dan membuka serta mengelola file tugas di komputer.' },
+  3:{ title:'Menyusun Laporan', ctx:'Konteks: Tugas tertulis',
+      desc:'Siti harus menyusun laporan hasil pengamatan lingkungan sekolah. Ia perlu mengetik laporan, mencari sumber informasi, dan mengompres beberapa file agar mudah dikirim kepada guru.' },
+  4:{ title:'Mengedit Video Kegiatan', ctx:'Konteks: Multimedia',
+      desc:'Bima dan kelompoknya diminta membuat video dokumentasi kegiatan sekolah. Mereka perlu memindahkan dan mengelola file video, mengedit video, serta menjaga komputer tetap terlindungi dari malware.' },
+  5:{ title:'Menghitung Anggaran Kegiatan', ctx:'Konteks: Pengolahan data',
+      desc:'Bendahara kelas, Nisa, harus mencatat pemasukan dan pengeluaran untuk kegiatan kelas. Ia perlu membuat tabel, menghitung total pengeluaran, dan mencari referensi harga barang melalui internet.' },
+  6:{ title:'Membuat Karya Digital', ctx:'Konteks: Kreativitas digital',
+      desc:'Farah mendapat tugas membuat ilustrasi digital untuk majalah dinding sekolah. Ia perlu menggunakan aplikasi desain, menyimpan dan mengatur file karya, serta memastikan komputer tetap aman saat digunakan.' },
+  7:{ title:'Kampanye Keamanan Digital', ctx:'Konteks: Literasi digital',
+      desc:'Kelompok Dinda akan membuat kampanye tentang keamanan akun digital. Mereka perlu mencari informasi tepercaya, membuat materi kampanye, dan memeriksa keamanan komputer dari ancaman malware.' }
+};
+
+/* DRAG & DROP */
+const pool = document.getElementById('pool');
+const zones = document.querySelectorAll('.zone');
+let selectedCard = null;
+const shuffledSW = [...SOFTWARE].sort(() => Math.random() - 0.5);
+
+shuffledSW.forEach(sw => {
+  const card = document.createElement('div');
+  card.className = 'sw-card';
+  card.draggable = true;
+  card.dataset.id = sw.id;
+  card.dataset.type = sw.type;
+  card.innerHTML = `<div class="sw-icon">${sw.svg}</div><span>${sw.nama}</span>`;
+  card.addEventListener('dragstart', e => {
+    selectedCard = card; card.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+  });
+  card.addEventListener('dragend', () => card.classList.remove('dragging'));
+  card.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (selectedCard === card) { selectedCard.classList.remove('selected'); selectedCard = null; }
+    else { if (selectedCard) selectedCard.classList.remove('selected'); selectedCard = card; card.classList.add('selected'); }
+  });
+  pool.appendChild(card);
+});
+
+zones.forEach(zone => {
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+  zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('dragover'); if (selectedCard) moveCardToZone(selectedCard, zone); });
+  zone.addEventListener('click', () => { if (selectedCard) moveCardToZone(selectedCard, zone); });
+});
+
+function moveCardToZone(card, zone) {
+  const targetContainer = zone.querySelector('.zone-items');
+  targetContainer.appendChild(card);
+  card.classList.remove('selected', 'dragging');
+  selectedCard = null;
+  const type = zone.dataset.type;
+  let tagClass = type === 'Sistem Operasi' ? '' : (type === 'Aplikasi' ? 'app' : 'util');
+  card.querySelector('.tag')?.remove();
+  const tag = document.createElement('span');
+  tag.className = `tag ${tagClass}`;
+  tag.textContent = type;
+  card.appendChild(tag);
+}
+
+pool.addEventListener('dragover', e => e.preventDefault());
+pool.addEventListener('drop', e => {
+  e.preventDefault();
+  if (selectedCard) {
+    pool.appendChild(selectedCard);
+    selectedCard.classList.remove('selected', 'dragging');
+    selectedCard.querySelector('.tag')?.remove();
+    selectedCard = null;
+  }
+});
+
+const inKelompok = document.getElementById('inKelompok');
+function renderCase(){
+  const n = inKelompok.value;
+  const c = CASES[n];
+  document.getElementById('caseTag').textContent  = 'Studi Kasus — Kelompok ' + n;
+  document.getElementById('caseTitle').textContent = c.title;
+  document.getElementById('caseCtx').textContent   = c.ctx;
+  document.getElementById('caseDesc').textContent  = c.desc;
+}
+inKelompok.addEventListener('change', renderCase);
+renderCase();
+
+let toastTimer;
+function toast(msg, type = 'ok'){
+  const t = document.getElementById('toast');
+  const ic = t.querySelector('.ic');
+  document.getElementById('toastMsg').textContent = msg;
+  t.className = 'toast show ' + type;
+  ic.textContent = type === 'ok' ? '✓' : '!';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+function collect(){
+  const anggota = [...document.querySelectorAll('.nm')].map(i => i.value.trim()).filter(Boolean);
+  const swAnswers = { 'Sistem Operasi': [], 'Aplikasi': [], 'Utilitas': [] };
+  zones.forEach(zone => {
+    const type = zone.dataset.type;
+    zone.querySelectorAll('.sw-card').forEach(card => {
+      const swId = card.dataset.id;
+      const sw = SOFTWARE.find(s => s.id === swId);
+      if (sw) swAnswers[type].push(sw);
+    });
+  });
+  const analisis = [...document.querySelectorAll('#tblA3 tbody tr')].map(tr => ({
+    kebutuhan: tr.querySelector('.need-in').value.trim(),
+    software: tr.querySelector('.sw-in').value.trim(),
+    alasan: tr.querySelector('.rs-in').value.trim()
+  }));
+  return {
+    kelas: document.getElementById('inKelas').value.trim() || '-',
+    kelompok: inKelompok.value,
+    anggota: anggota.length ? anggota : ['-'],
+    kasus: CASES[inKelompok.value],
+    a1q1: document.getElementById('a1q1').value.trim(),
+    a1c1: document.getElementById('a1c1').value.trim(),
+    a1c2: document.getElementById('a1c2').value.trim(),
+    a1c3: document.getElementById('a1c3').value.trim(),
+    a1c4: document.getElementById('a1c4').value.trim(),
+    swAnswers, analisis,
+    a4q1: document.getElementById('a4q1').value.trim()
+  };
+}
+
+const esc = s => (s || '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])) || '-';
+const fileNameBase = () => {
+  const d = collect();
+  return `LKPD_Informatika_Kelas-${d.kelas.replace(/\s+/g,'')}_Kelompok-${d.kelompok}`;
+};
+
+/* SVG → PNG (agar gambar muncul di PDF) */
+function svgToPngDataUrl(svgStr, size = 96) {
+  return new Promise((resolve) => {
+    try {
+      let svg = svgStr;
+      if (!svg.includes('xmlns=')) {
+        svg = svg.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ');
+      }
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      const svg64 = btoa(unescape(encodeURIComponent(svg)));
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = size; canvas.height = size;
+          const ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, size, size);
+          ctx.drawImage(img, 0, 0, size, size);
+          resolve(canvas.toDataURL('image/png'));
+        } catch(e) { resolve(''); }
+      };
+      img.onerror = () => resolve('');
+      img.src = 'data:image/svg+xml;base64,' + svg64;
+    } catch(e) { resolve(''); }
+  });
+}
+
+/* BUILD PDF HTML */
+function buildPDFHtml(pngCache){
+  const d = collect();
+  const tgl = new Date().toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' });
+
+  const renderSwChips = (list) => {
+    if (!list.length) return '<span style="font-size:9.5px;color:#94a3b8;">— belum diisi —</span>';
+    return `<div class="sw-grid">${list.map(s => {
+      const png = pngCache[s.id] || '';
+      return `
+        <div class="sw-chip">
+          ${png ? `<img src="${png}" alt="" />` : ''}
+          <span>${esc(s.nama)}</span>
+        </div>`;
+    }).join('')}</div>`;
+  };
+
+  const rowsAn = d.analisis.map((a, i) => `
+    <tr>
+      <td style="width:26px;text-align:center;font-weight:700;">${i+1}</td>
+      <td style="width:170px;">${esc(a.kebutuhan)}</td>
+      <td style="width:150px;">${esc(a.software)}</td>
+      <td>${esc(a.alasan)}</td>
+    </tr>`).join('');
+
+  return `
+  <div class="pdf-doc">
+    <div class="doc-head">
+      <div class="doc-label">LEMBAR KERJA PESERTA DIDIK</div>
+      <div class="doc-title">Sistem Komputer — Perangkat Lunak (Software)</div>
+      <div class="doc-sub">Mata Pelajaran Informatika &nbsp;•&nbsp; Problem Based Learning &nbsp;•&nbsp; Dicetak: ${tgl}</div>
+    </div>
+
+    <div class="p-sec">
+      <div class="p-head">A. TUJUAN PEMBELAJARAN</div>
+      <ol class="list-num">
+        <li>Murid mampu menjelaskan pengertian perangkat lunak (software) beserta minimal dua ciri pokoknya setelah menyimak pemaparan materi secara tepat. (C2 – Menjelaskan)</li>
+        <li>Murid mampu mengklasifikasikan perangkat lunak (software) berdasarkan fungsinya ke dalam kategori sistem operasi, aplikasi, dan utilitas melalui pengamatan gambar tampilan dan contoh software dengan benar minimal 10 dari 20 contoh. (C2 – Mengklasifikasikan)</li>
+        <li>Murid mampu menganalisis kebutuhan perangkat lunak (software) berdasarkan studi kasus sederhana melalui diskusi kelompok, dengan menentukan minimal tiga software yang sesuai dengan kebutuhan dalam kasus serta memberikan alasan logis untuk setiap pilihan. (C4 – Menganalisis)</li>
+      </ol>
+    </div>
+
+    <div class="p-sec">
+      <div class="p-head c">B. KESELAMATAN DAN KESEHATAN KERJA (K3)</div>
+      <ul class="list-num">
+        <li>Menggunakan perangkat secara hati-hati, tidak memindahkan perangkat, dan tidak mengubah kabel atau sambungan perangkat tanpa izin.</li>
+        <li>Gunakan mouse dan keyboard dengan gerakan yang wajar, dan hindari penggunaan yang berlebihan tanpa istirahat untuk mencegah cedera pergelangan tangan.</li>
+        <li>Setiap 20 menit menatap layar komputer, istirahatkan mata selama 20 detik dengan melihat objek yang berjarak 20 kaki (sekitar 6 meter).</li>
+      </ul>
+    </div>
+
+    <div class="p-sec">
+      <div class="p-head v">C. PETUNJUK PENGERJAAN</div>
+      <ol class="list-num">
+        <li>Kerjakan bersama kelompok dan diskusikan setiap jawaban.</li>
+        <li>Tulis jawaban dengan kalimat sendiri, jangan menyalin dari media pembelajaran atau google.</li>
+        <li>Tanyakan kepada guru jika ada yang belum jelas.</li>
+        <li>Presentasikan hasil pekerjaan kelompok selama ±2 menit.</li>
+      </ol>
+    </div>
+
+    <div class="p-sec">
+      <div class="p-head">IDENTITAS KELOMPOK</div>
+      <div class="p-idbox">
+        <div><b>Kelas</b><br>${esc(d.kelas)}</div>
+        <div><b>Nomor Kelompok</b><br>Kelompok ${esc(d.kelompok)}</div>
+      </div>
+      <div class="p-kv">
+        <div class="k">NAMA ANGGOTA KELOMPOK</div>
+        <div class="v">${d.anggota.map((a,i)=>`${i+1}. ${esc(a)}`).join('\n')}</div>
+      </div>
+    </div>
+
+    <div class="p-sec">
+      <div class="p-head c">AKTIVITAS 1 — KENALI SOFTWARE! (Menjelaskan)</div>
+      <div class="p-kv">
+        <div class="k">1. Apa yang dimaksud dengan perangkat lunak (software)?</div>
+        <div class="v">${esc(d.a1q1)}</div>
+      </div>
+      <div class="p-kv">
+        <div class="k">2. Ciri pokok software</div>
+        <div class="v">• Ciri 1: ${esc(d.a1c1)}\n• Ciri 2: ${esc(d.a1c2)}\n• Ciri 3: ${esc(d.a1c3 || '-')}\n• Ciri 4: ${esc(d.a1c4 || '-')}</div>
+      </div>
+    </div>
+
+    <div class="p-sec">
+      <div class="p-head a">AKTIVITAS 2 — KLASIFIKASI SOFTWARE! (Mengklasifikasikan)</div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:33%;">Sistem Operasi</th>
+            <th style="width:33%;">Aplikasi</th>
+            <th style="width:34%;">Utilitas</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>${renderSwChips(d.swAnswers['Sistem Operasi'])}</td>
+            <td>${renderSwChips(d.swAnswers['Aplikasi'])}</td>
+            <td>${renderSwChips(d.swAnswers['Utilitas'])}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="p-sec">
+      <div class="p-head e">AKTIVITAS 3 — PILIH SOFTWARE YANG TEPAT! (Menganalisis)</div>
+      <div style="background:#eef2ff;border:1px solid #c7d2fe;border-radius:8px;padding:9px 12px;margin-bottom:9px;">
+        <div style="font-size:9px;font-weight:800;letter-spacing:1.4px;color:#4338ca;margin-bottom:3px;">STUDI KASUS — KELOMPOK ${esc(d.kelompok)}</div>
+        <div style="font-size:12px;font-weight:800;color:#312e81;margin-bottom:3px;">${esc(d.kasus.title)}</div>
+        <div style="font-size:9px;font-weight:700;color:#6366f1;margin-bottom:4px;">${esc(d.kasus.ctx)}</div>
+        <div style="font-size:10px;line-height:1.5;color:#3730a3;">${esc(d.kasus.desc)}</div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:26px;">No</th>
+            <th style="width:170px;">Kebutuhan dalam kasus</th>
+            <th style="width:150px;">Software yang sesuai</th>
+            <th>Alasan pemilihan</th>
+          </tr>
+        </thead>
+        <tbody>${rowsAn}</tbody>
+      </table>
+    </div>
+
+    <div class="p-sec">
+      <div class="p-kv">
+        <div class="k">Pertanyaan Refleksi Kelompok: Mengapa software yang dipilih harus disesuaikan dengan kebutuhan dalam studi kasus?</div>
+        <div class="v">${esc(d.a4q1)}</div>
+      </div>
+    </div>
+
+    <div class="doc-footer">
+      LKPD Interaktif — Informatika &nbsp;|&nbsp; Sistem Komputer: Perangkat Lunak &nbsp;|&nbsp; Problem Based Learning
+    </div>
+  </div>`;
+}
+
+/* DOWNLOAD PDF */
+document.getElementById('btnPdf').addEventListener('click', async function(){
+  if (typeof html2pdf === 'undefined'){ toast('Gagal memuat modul PDF.', 'err'); return; }
+  const btn = this;
+  btn.disabled = true;
+  const original = btn.innerHTML;
+  btn.innerHTML = '⏳ Menyiapkan gambar...';
+
+  try {
+    const pngCache = {};
+    for (const sw of SOFTWARE) {
+      pngCache[sw.id] = await svgToPngDataUrl(sw.svg, 96);
+    }
+
+    btn.innerHTML = '⏳ Menyusun PDF...';
+
+    const container = document.getElementById('pdfContainer');
+    container.style.width = '718px';
+    container.innerHTML = buildPDFHtml(pngCache);
+
+    await new Promise(r => setTimeout(r, 800));
+
+    const contentEl = container.firstElementChild;
+    const hPx = contentEl.scrollHeight;
+    const hMm = (hPx * 25.4) / 96;
+    const pageW = 210;
+    const pageH = Math.max(297, Math.ceil(hMm) + 20);
+
+    const opt = {
+      margin: [10, 10, 10, 10],
+      filename: fileNameBase() + '.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        width: 718,
+        windowWidth: 718,
+        scrollX: 0,
+        scrollY: 0,
+        x: 0,
+        y: 0
+      },
+      jsPDF: {
+        unit: 'mm',
+        format: [pageW, pageH],
+        orientation: 'portrait',
+        compress: true
+      },
+      pagebreak: { mode: 'avoid-all' }
+    };
+
+    await html2pdf().set(opt).from(contentEl).save();
+    toast('PDF berhasil diunduh!', 'ok');
+  } catch (err) {
+    console.error(err);
+    toast('Gagal membuat PDF: ' + err.message, 'err');
+  } finally {
+    document.getElementById('pdfContainer').innerHTML = '';
+    btn.disabled = false;
+    btn.innerHTML = original;
+  }
+});
+
+document.getElementById('btnSend').addEventListener('click', () => {
+  const url = 'https://drive.google.com/drive/folders/1F6tD0wzmQYlzok_xdTwVVSBZEGIXxBen?usp=drive_link';
+  window.open(url, '_blank', 'noopener');
+  toast('Membuka Google Drive — silakan unggah file PDF kamu.', 'ok');
+});
+</script>
+</body>
+</html>
