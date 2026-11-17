@@ -239,34 +239,28 @@ select.field {
 .toast.ok .ic { background: #10b981; }
 .toast.err .ic { background: #f43f5e; }
 
-/* PDF PRINT AREA */
 #pdfContainer {
   position: absolute; top: 0; left: 0;
   width: 718px; background: #ffffff;
   z-index: -1; pointer-events: none; overflow: hidden;
 }
 
-/* =========================================================
-   KOP JUDUL PDF — Ditengahkan
-   LEMBAR KERJA PESERTA DIDIK → lebih BESAR
-   Sistem Komputer — Perangkat Lunak → lebih KECIL
-   ========================================================= */
 .pdf-doc { font-family: 'Plus Jakarta Sans', Arial, sans-serif; color: #1e293b; padding: 4px 6px; background: #fff; width: 100%; }
 .pdf-doc .doc-head {
   border-bottom: 4px solid #6366f1;
   padding-bottom: 10px;
   margin-bottom: 12px;
-  text-align: center;   /* ← kop judul di tengah */
+  text-align: center;
 }
 .pdf-doc .doc-label {
-  font-size: 18px;              /* ← diperbesar dari 10px */
+  font-size: 18px;
   letter-spacing: 3px;
   color: #6366f1;
   font-weight: 800;
   text-transform: uppercase;
 }
 .pdf-doc .doc-title {
-  font-size: 12px;              /* ← diperkecil dari 20px */
+  font-size: 12px;
   font-weight: 700;
   color: #312e81;
   letter-spacing: .3px;
@@ -353,14 +347,14 @@ select.field {
     </div>
   </header>
 
-  <!-- A. Tujuan Pembelajaran -->
+  <!-- A. Tujuan Pembelajaran — ID ditambahkan agar PDF sinkron -->
   <section class="card">
     <div class="sec-head">
       <div class="sec-icon" style="background:linear-gradient(135deg,#f59e0b,#ea580c);">A</div>
       <div><h2>A. Tujuan Pembelajaran</h2><p>Kompetensi yang akan dicapai setelah pembelajaran</p></div>
     </div>
     <div class="list-box">
-      <ul>
+      <ul id="tpList">
         <li><strong>1.</strong> Murid mampu menjelaskan pengertian perangkat lunak (software) beserta minimal dua ciri pokoknya setelah menyimak pemaparan materi secara tepat. (C2 – Menjelaskan)</li>
         <li><strong>2.</strong> Murid mampu mengklasifikasikan perangkat lunak (software) berdasarkan fungsinya ke dalam kategori sistem operasi, aplikasi, dan utilitas melalui pengamatan dan contoh software dengan benar. (C2 – Mengklasifikasikan)</li>
         <li><strong>3.</strong> Murid mampu menganalisis kebutuhan perangkat lunak (software) berdasarkan studi kasus sederhana melalui diskusi kelompok, dengan menentukan software yang sesuai dengan kebutuhan dalam kasus serta memberikan alasan logis untuk setiap pilihan. (C4 – Menganalisis)</li>
@@ -368,14 +362,14 @@ select.field {
     </div>
   </section>
 
-  <!-- B. K3 -->
+  <!-- B. K3 — ID ditambahkan -->
   <section class="card">
     <div class="sec-head">
       <div class="sec-icon" style="background:linear-gradient(135deg,#10b981,#059669);">B</div>
       <div><h2>B. Keselamatan dan Kesehatan Kerja (K3)</h2><p>Panduan keselamatan saat menggunakan perangkat komputer</p></div>
     </div>
     <div class="list-box">
-      <ul>
+      <ul id="k3List">
         <li>Menggunakan perangkat secara hati-hati, tidak memindahkan perangkat, dan tidak mengubah kabel atau sambungan perangkat tanpa izin.</li>
         <li>Gunakan mouse dan keyboard dengan gerakan yang wajar, dan hindari penggunaan yang berlebihan tanpa istirahat untuk mencegah cedera pergelangan tangan.</li>
         <li>Setiap 20 menit menatap layar komputer, istirahatkan mata selama 20 detik dengan melihat objek yang berjarak 20 kaki (sekitar 6 meter).</li>
@@ -383,14 +377,14 @@ select.field {
     </div>
   </section>
 
-  <!-- C. Petunjuk Pengerjaan -->
+  <!-- C. Petunjuk — ID ditambahkan -->
   <section class="card">
     <div class="sec-head">
       <div class="sec-icon rose">C</div>
       <div><h2>C. Petunjuk Pengerjaan</h2><p>Langkah-langkah yang harus diikuti selama mengerjakan LKPD</p></div>
     </div>
     <div class="list-box">
-      <ul>
+      <ul id="petunjukList">
         <li><strong>1.</strong> Kerjakan bersama kelompok dan diskusikan setiap jawaban.</li>
         <li><strong>2.</strong> Tulis jawaban dengan kalimat sendiri, jangan menyalin dari media pembelajaran atau google.</li>
         <li><strong>3.</strong> Tanyakan kepada guru jika ada yang belum jelas.</li>
@@ -447,7 +441,7 @@ select.field {
     </div>
   </section>
 
-  <!-- AKTIVITAS 2 — Klasifikasi Software -->
+  <!-- AKTIVITAS 2 -->
   <section class="card">
     <div class="sec-head"><div class="sec-icon amber">02</div><div><h2>Aktivitas 2 — Klasifikasi Software!</h2><p>Tujuan: Mengklasifikasikan software berdasarkan fungsinya</p></div></div>
     <div class="hint"><span>🎯</span><span><b>Petunjuk:</b> Perhatikan 20 software berikut beserta gambar tampilannya. Seret (drag) atau ketuk gambar software ke dalam kolom kategori yang tepat (Sistem Operasi, Aplikasi, atau Utilitas).</span></div>
@@ -678,6 +672,24 @@ const fileNameBase = () => {
   return `LKPD_Informatika_Kelas-${d.kelas.replace(/\s+/g,'')}_Kelompok-${d.kelompok}`;
 };
 
+/* ============================================================
+   FUNGSI BARU: Ambil isi list dari DOM agar PDF selalu sinkron
+   dengan teks yang tampil di halaman (TP, K3, Petunjuk).
+   ============================================================ */
+function getListItems(listId) {
+  const list = document.getElementById(listId);
+  if (!list) return [];
+  return [...list.querySelectorAll('li')].map(li => {
+    const clone = li.cloneNode(true);
+    // Buang penanda angka "1.", "2.", dst. di dalam <strong> agar
+    // tidak dobel saat dirender di <ol> PDF (yang otomatis bernomor).
+    clone.querySelectorAll('strong').forEach(s => {
+      if (/^\s*\d+\.\s*$/.test(s.textContent)) s.remove();
+    });
+    return clone.textContent.replace(/^\s*\d+\.\s*/, '').replace(/\s+/g, ' ').trim();
+  });
+}
+
 /* SVG → PNG (agar gambar muncul di PDF) */
 function svgToPngDataUrl(svgStr, size = 96) {
   return new Promise((resolve) => {
@@ -706,10 +718,19 @@ function svgToPngDataUrl(svgStr, size = 96) {
   });
 }
 
-/* BUILD PDF HTML */
+/* BUILD PDF HTML — sekarang TP/K3/Petunjuk dibaca dari DOM */
 function buildPDFHtml(pngCache){
   const d = collect();
   const tgl = new Date().toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' });
+
+  // ==== BACA LANGSUNG DARI HALAMAN (bukan hardcode) ====
+  const tpItems       = getListItems('tpList');
+  const k3Items       = getListItems('k3List');
+  const petunjukItems = getListItems('petunjukList');
+
+  const renderOl = (items) => items.length
+    ? `<ol class="list-num">${items.map(t => `<li>${esc(t)}</li>`).join('')}</ol>`
+    : '<div style="font-size:10px;color:#94a3b8;">—</div>';
 
   const renderSwChips = (list) => {
     if (!list.length) return '<span style="font-size:9.5px;color:#94a3b8;">— belum diisi —</span>';
@@ -741,30 +762,17 @@ function buildPDFHtml(pngCache){
 
     <div class="p-sec">
       <div class="p-head">A. TUJUAN PEMBELAJARAN</div>
-      <ol class="list-num">
-        <li>Murid mampu menjelaskan pengertian perangkat lunak (software) beserta minimal dua ciri pokoknya setelah menyimak pemaparan materi secara tepat. (C2 – Menjelaskan)</li>
-        <li>Murid mampu mengklasifikasikan perangkat lunak (software) berdasarkan fungsinya ke dalam kategori sistem operasi, aplikasi, dan utilitas melalui pengamatan gambar tampilan dan contoh software dengan benar minimal 10 dari 20 contoh. (C2 – Mengklasifikasikan)</li>
-        <li>Murid mampu menganalisis kebutuhan perangkat lunak (software) berdasarkan studi kasus sederhana melalui diskusi kelompok, dengan menentukan minimal tiga software yang sesuai dengan kebutuhan dalam kasus serta memberikan alasan logis untuk setiap pilihan. (C4 – Menganalisis)</li>
-      </ol>
+      ${renderOl(tpItems)}
     </div>
 
     <div class="p-sec">
       <div class="p-head c">B. KESELAMATAN DAN KESEHATAN KERJA (K3)</div>
-      <ul class="list-num">
-        <li>Menggunakan perangkat secara hati-hati, tidak memindahkan perangkat, dan tidak mengubah kabel atau sambungan perangkat tanpa izin.</li>
-        <li>Gunakan mouse dan keyboard dengan gerakan yang wajar, dan hindari penggunaan yang berlebihan tanpa istirahat untuk mencegah cedera pergelangan tangan.</li>
-        <li>Setiap 20 menit menatap layar komputer, istirahatkan mata selama 20 detik dengan melihat objek yang berjarak 20 kaki (sekitar 6 meter).</li>
-      </ul>
+      ${renderOl(k3Items)}
     </div>
 
     <div class="p-sec">
       <div class="p-head v">C. PETUNJUK PENGERJAAN</div>
-      <ol class="list-num">
-        <li>Kerjakan bersama kelompok dan diskusikan setiap jawaban.</li>
-        <li>Tulis jawaban dengan kalimat sendiri, jangan menyalin dari media pembelajaran atau google.</li>
-        <li>Tanyakan kepada guru jika ada yang belum jelas.</li>
-        <li>Presentasikan hasil pekerjaan kelompok selama ±2 menit.</li>
-      </ol>
+      ${renderOl(petunjukItems)}
     </div>
 
     <div class="p-sec">
