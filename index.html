@@ -362,7 +362,7 @@ select.field {
     </div>
   </section>
 
-  <!-- B. K3 — SUDAH DIPERBARUI -->
+  <!-- B. K3 -->
   <section class="card">
     <div class="sec-head">
       <div class="sec-icon" style="background:linear-gradient(135deg,#10b981,#059669);">B</div>
@@ -713,11 +713,11 @@ function svgToPngDataUrl(svgStr, size = 96) {
   });
 }
 
-/* BUILD PDF HTML — TP/K3/Petunjuk dibaca dari DOM + tanggal cetak FIXED */
+/* BUILD PDF HTML — TP/K3/Petunjuk dibaca dari DOM + tanggal cetak dinamis */
 function buildPDFHtml(pngCache){
   const d = collect();
-  // === TANGGAL CETAK FIXED — hanya tampil di PDF, tidak di UI ===
-  const tgl = '16 Oktober 2026';
+  // === TANGGAL CETAK DINAMIS — mengikuti tanggal saat PDF diunduh ===
+  const tgl = new Date().toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' });
 
   const tpItems       = getListItems('tpList');
   const k3Items       = getListItems('k3List');
